@@ -1,105 +1,53 @@
 const express = require('express');
 const router = express.Router();
-const LoadNewsError = require("../customErrors");
+const LoadNewsError = require("../customErrors").LoadNewsError;
+const NoNewsRecentlyError = require("../customErrors").NoNewsRecentlyError;
 
 const models = require("../models");
-const NBCS = models.NBCS;
-const CBSS = models.CBSS;
-const ESPN = models.ESPN;
-const Bleacher = models.Bleacher;
-const SBNation = models.SBNation;
-
 
 router.get('/', function (req, res) {
     res.render('index', {title: 'Express'});
 });
 
-
 function getLatestNews(Model) {
     let dateFrom = new Date();
     dateFrom.setMinutes(dateFrom.getMinutes() - 20);
+    return Model.findAndFilter({dateParse: {$gte: +dateFrom}})
+        .then(news => {
+            if (news.length === 0) throw new NoNewsRecentlyError;
+            return news;
+        })
+}
 
-    return new Promise(function (resolve, reject) {
-        let news = Model.find(function (err, news) {
-            if (err) return err;
-            /*Model.findAndFilter({dateParse: {$gte: +dateFrom}}).then(news => {
-                resolve(news);
-            })*/
-            resolve(news);
+function renderNews(req, res) {
+    getLatestNews(this.Model)
+        .then(news => {
+            let shortNews = getNewsByType(news, true);
+            let longNews = getNewsByType(news, false);
+            res.render("newsPage", {shortNews: shortNews, longNews: longNews, title: this.Model.modelName})
+        })
+        .catch(() => {
+            res.statusCode(500).render("error", {error: new LoadNewsError()});
         });
+}
+
+function getNewsByType(newsS, isShort) {
+    return newsS.filter(news => {
+        return news._doc.shortNew === isShort
     });
 
 }
 
-function getNewsByType(newsS, isShort){
-    let newsSRes = [];
-    newsS.map(news => {
-        if(news._doc.shortNew === isShort){
-            newsSRes.push(news);
-        }
-    });
-    return newsSRes;
-}
 
+router.get("/CBSS", renderNews.bind({Model: models.CBSS}));
 
-router.get("/CBSS", function (req, res) {
-    getLatestNews(CBSS)
-        .then(news => {
-            let shortNews = getNewsByType(news, true);
-            let longNews = getNewsByType(news, false);
-            res.render("newsPage", {shortNews: shortNews, longNews: longNews, title: "CBS SPORTS" })
-        })
-        .catch(() => {
-            res.statusCode(500).render("error", {error : new LoadNewsError()});
-        });
-});
+router.get("/Bleacher", renderNews.bind({Model: models.Bleacher}));
 
-router.get("/Bleacher", function (req, res) {
-    getLatestNews(Bleacher)
-        .then(news => {
-            let shortNews = getNewsByType(news, true);
-            let longNews = getNewsByType(news, false);
-            res.render("newsPage", {shortNews: shortNews, longNews: longNews, title: "Bleacher" })
-        })
-        .catch(() => {
-            res.statusCode(500).render("error", {error : new LoadNewsError()});
-        });
-});
+router.get("/NBS", renderNews.bind({Model: models.NBCS}));
 
-router.get("/NBS", function (req, res) {
-    getLatestNews(NBCS)
-        .then(news => {
-            let shortNews = getNewsByType(news, true);
-            let longNews = getNewsByType(news, false);
-            res.render("newsPage", {shortNews: shortNews, longNews: longNews, title: "NBCS Sports" })
-        })
-        .catch(() => {
-            res.statusCode(500).render("error", {error : new LoadNewsError()});
-        });
-});
+router.get("/SBNation", renderNews.bind({Model: models.SBNation}));
 
-router.get("/SBNation", function (req, res) {
-    getLatestNews(SBNation)
-        .then(news => {
-            let shortNews = getNewsByType(news, true);
-            let longNews = getNewsByType(news, false);
-            res.render("newsPage", {shortNews: shortNews, longNews: longNews, title: "SB Nation" })
-        })
-        .catch(() => {
-            res.statusCode(500).render("error", {error : new LoadNewsError()});
-        });
-});
+router.get("/ESPN", renderNews.bind({Model: models.ESPN}));
 
-router.get("/ESPN", function (req, res) {
-    getLatestNews(ESPN)
-        .then(news => {
-            let shortNews = getNewsByType(news, true);
-            let longNews = getNewsByType(news, false);
-            res.render("newsPage", {shortNews: shortNews, longNews: longNews, title: "ESPN" })
-        })
-        .catch(() => {
-            res.statusCode(500).render("error", {error : new LoadNewsError()});
-        });
-});
 
 module.exports = router;
