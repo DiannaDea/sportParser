@@ -4,16 +4,44 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
 </head>
 <body>
-    <% news.map(item => {%>
-        <div class="feed">
-            <h3><%= item._doc.title%></h3>
-            <% if(!item._doc.shortNew){%>
-                <div class="img-container">
-                    <img src="<%= item._doc.imageSrc%>"  alt="<%= item._doc.title%>"/>
+<div class="site-title">
+    <h1><%= title%></h1>
+</div>
+<div class="container">
+
+    <div class="container-long-news">
+        <% longNews.map((item, i) => {%>
+            <div class="news-item shadow-wrap item-long ">
+                <% if(i === 0) {%>
+                    <div class="container-header">
+                        <h1>TOP NEWS</h1>
+                    </div>
+                <%} %>
+                <div class="container-body">
+                    <div class="item-media">
+                        <img src="<%= item._doc.imageSrc%>"  alt="<%= item._doc.title%>"/>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">
+                            <h2><%= item._doc.title%></h2>
+                        </div>
+                        <div class="item-description">
+                            <p><%= item._doc.description%></p>
+                        </div>
+                    </div>
                 </div>
-                <p><%= item._doc.description%></p>
-            <%} %>
-        </div>
-    <%})%>
+
+            </div>
+
+        <%})%>
+    </div>
+    <div class="container-short-news shadow-wrap">
+        <h1>TOP HEADERS</h1>
+        <% shortNews.map(item => {%>
+        <h3><%= item._doc.title%></h3>
+        <%})%>
+    </div>
+</div>
+
 </body>
 </html>
