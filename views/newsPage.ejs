@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <% news.map(item => {%>
+        <div class="feed">
+            <h3><%= item._doc.title%></h3>
+            <% if(!item._doc.shortNew){%>
+                <div class="img-container">
+                    <img src="<%= item._doc.imageSrc%>"  alt="<%= item._doc.title%>"/>
+                </div>
+                <p><%= item._doc.description%></p>
+            <%} %>
+        </div>
+    <%})%>
+</body>
+</html>
