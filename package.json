@@ -3,16 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    /* forever start ./parse_module/index.js */
-    "start": "concurrently \"npm run start_parse\" \"npm run start_server\"",
-    "start_parse": "node ./parse_module/index.js",
-    "stop": "forever stop ./parse_module/index.js",
-    "start_server": "node ./bin/www"
+    "start": "forever start ./bin/www",
+    "stop": "forever stop ./bin/www"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
     "cheerio": "^1.0.0-rc.2",
-    "concurrently": "^3.5.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
     "ejs": "~2.5.7",
@@ -21,9 +17,7 @@
     "fs": "0.0.1-security",
     "mongoose": "^4.13.9",
     "mongoose-find-and-filter": "^1.0.0",
-    "morgan": "~1.9.0",
     "needle": "^2.1.0",
-    "node-schedule": "^1.3.0",
-    "serve-favicon": "~2.4.5"
+    "node-schedule": "^1.3.0"
   }
 }

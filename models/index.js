@@ -10,15 +10,11 @@ const schemaDB = {
     dateParse: {type: Number, default: Date.now}
 };
 
-
-
 const NBCSS = new Schema(schemaDB);
 const CBSS = new Schema(schemaDB);
 const ESPN = new Schema(schemaDB);
 const Bleacher = new Schema(schemaDB);
 const SBNation = new Schema(schemaDB);
-
-
 
 NBCSS.plugin(mongooseFindAndFilter);
 CBSS.plugin(mongooseFindAndFilter);

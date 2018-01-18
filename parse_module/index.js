@@ -1,7 +1,7 @@
 const needle = require("needle");
 const cheerio = require("cheerio");
-const fileStream = require("../fileReader");
-const schedule = require('node-schedule');
+const ParseError = require("../customErrors");
+const NoFunctionForParseError = require("../customErrors");
 
 const URLS = [
     "http://www.espn.com/",
@@ -121,35 +121,30 @@ function parse(URL) {
                     fillDB(news, "ESPN");
                     break;
                 default:
-                    console.log("No function for parse");
-                    break;
+                    reject(new NoFunctionForParseError())
             }
             resolve(news);
         })
     })
 }
 
-function fillDB(news, siteName) {
-    let Model;
+function getModel(siteName) {
     switch (siteName) {
         case("CBSS"):
-            Model = CBSS;
-            break;
+            return CBSS;
         case("BLEACHER"):
-            Model = Bleacher;
-            break;
+            return Bleacher;
         case("NBCS"):
-            Model = NBCS;
-            break;
+            return NBCS;
         case("SBNation"):
-            Model = SBNation;
-            break;
+            return SBNation;
         case("ESPN"):
-            Model = ESPN;
-            break;
-        default:
-            console.log("((((((");
+            return ESPN;
     }
+}
+
+function fillDB(news, siteName) {
+    let Model = getModel(siteName);
     news.map((item, i) => {
         let newsItem;
         if (item.imageSrc === "" && item.description === "") {
@@ -166,9 +161,8 @@ function fillDB(news, siteName) {
                 imageSrc: item.imageSrc
             });
         }
-
         newsItem.save(function (err, newsItem) {
-            if (err) return console.error(err);
+            if (err) console.log(err);
         });
     })
 }
@@ -187,11 +181,12 @@ function getNews() {
     return Promise.all(URLS.map(URL => {
         return parse(URL)
     }))
+        .then(() => {
+            console.log("GET NEWS at " + new Date());
+        })
+        .catch(error => {
+            throw new ParseError();
+        });
 }
-
-const timer = schedule.scheduleJob('*/20 * * * *', function(){
-    getNews();
-    console.log("GET NEWS at " + new Date());
-});
 
 module.exports = getNews;

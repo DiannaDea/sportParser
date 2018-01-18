@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
-let fileStream = require("../fileReader");
-
+const LoadNewsError = require("../customErrors");
 
 const models = require("../models");
 const NBCS = models.NBCS;
@@ -12,13 +11,6 @@ const SBNation = models.SBNation;
 
 
 router.get('/', function (req, res) {
-    /*getNews()
-        .then(() => {
-            res.render('index', {title: 'Express'});
-        })
-        .catch(err => {
-            res.status(500).render('error');
-        });*/
     res.render('index', {title: 'Express'});
 });
 
@@ -38,13 +30,14 @@ function getLatestNews(Model) {
 
 }
 
+
 router.get("/CBSS", function (req, res) {
     getLatestNews(CBSS)
         .then(news => {
             res.render("newsPage", {news : news})
         })
-        .catch(error => {
-            res.statusCode(500).render("error");
+        .catch(() => {
+            res.statusCode(500).render("error", {error : new LoadNewsError()});
         });
 });
 
@@ -53,8 +46,8 @@ router.get("/Bleacher", function (req, res) {
         .then(news => {
             res.render("newsPage", {news: news, title: "BLEACHER"})
         })
-        .catch(error => {
-            res.statusCode(500).render("error");
+        .catch(() => {
+            res.statusCode(500).render("error", {error : new LoadNewsError()});
         });
 });
 
@@ -63,8 +56,8 @@ router.get("/NBS", function (req, res) {
         .then(news => {
             res.render("newsPage", {news : news})
         })
-        .catch(error => {
-            res.statusCode(500).render("error");
+        .catch(() => {
+            res.statusCode(500).render("error", {error : new LoadNewsError()});
         });
 });
 
@@ -73,8 +66,8 @@ router.get("/SBNation", function (req, res) {
         .then(news => {
             res.render("newsPage", {news : news})
         })
-        .catch(error => {
-            res.statusCode(500).render("error");
+        .catch(() => {
+            res.statusCode(500).render("error", {error : new LoadNewsError()});
         });
 });
 
@@ -83,8 +76,8 @@ router.get("/ESPN", function (req, res) {
         .then(news => {
             res.render("newsPage", {news : news})
         })
-        .catch(error => {
-            res.statusCode(500).render("error");
+        .catch(() => {
+            res.statusCode(500).render("error", {error : new LoadNewsError()});
         });
 });
 

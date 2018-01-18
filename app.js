@@ -1,35 +1,38 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const schedule = require('node-schedule');
 
-var index = require('./routes');
+const getNews = require("./parse_module");
 
-var app = express();
+const index = require('./routes');
+
+const app = express();
+
+const connection = mongoose.connect('mongodb://admin:admin@ds259117.mlab.com:59117/news');
 
 
-mongoose
-    .connect('mongodb://admin:admin@ds259117.mlab.com:59117/news')
-    .then(() => {
-        console.log("Connected!!!");
-    })
-    .catch(err => {
-        console.log("Connection error");
+mongoose.connection.on('connected', function(){
+    mongoose.connection.db.listCollections().toArray(function (err, names) {
+        if (err) {
+            console.log("Connection error");
+        } else {
+            console.log("Connection success");
+            if(names.length <= 1) {
+                getNews();
+                console.log("First time");
+            }
+        }
     });
-
-
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
@@ -37,15 +40,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 
-
-// catch 404 and forward to error handler
 app.use(function (req, res, next) {
-    var err = new Error('Not Found');
+    const err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
 
-// error handler
 app.use(function (err, req, res, next) {
     // set locals, only providing error in development
     res.locals.message = err.message;
@@ -56,6 +56,9 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
+const timer = schedule.scheduleJob('*/20 * * * *', function () {
+    getNews();
+});
 
 
 module.exports = app;
