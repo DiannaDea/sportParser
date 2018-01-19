@@ -11,10 +11,5 @@ let LoadNewsError = new CustomError('LoadNews', "Unable to load news");
 let NoFunctionForParseError = new CustomError("NoFunctionForParse", "No function for parse in parse functions list");
 let NoNewsRecentlyError = new CustomError("NoNewsRecently", "No news parsed for the last 20 min");
 
-module.exports = {
-    ParseError: ParseError,
-    LoadNewsError: LoadNewsError,
-    NoFunctionForParseError: NoFunctionForParseError,
-    NoNewsRecentlyError : NoNewsRecentlyError
-};
+module.exports = {ParseError, LoadNewsError, NoNewsRecentlyError, NoFunctionForParseError};
 

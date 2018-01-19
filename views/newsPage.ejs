@@ -2,11 +2,16 @@
 <html>
 <head>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
 <div class="site-title">
     <h1><%= title%></h1>
 </div>
+<p>Дата новостей:
+    <input type="range" min="1" max="<%= countGroups%>" id="dates-slider" value="<%= countGroups%>">
+    <div id="date-placeholder"></div>
+</p>
 <div class="container">
 
     <div class="container-long-news">
@@ -42,6 +47,20 @@
         <%})%>
     </div>
 </div>
+<script>
+    function main(){
+        const DATES = JSON.parse('<%- newsGroups %>');
+        console.log(DATES);
+        const $date_placeholder = $("#date-placeholder");
+        $date_placeholder.append(DATES[DATES.length-1])
 
+        $("#dates-slider").change(function () {
+            $date_placeholder.empty();
+            let date = DATES[parseInt($(this).val()) -1];
+            $date_placeholder.append(date);
+        })
+    }
+    main()
+</script>
 </body>
 </html>

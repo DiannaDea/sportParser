@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const LoadNewsError = require("../customErrors").LoadNewsError;
 const NoNewsRecentlyError = require("../customErrors").NoNewsRecentlyError;
+const _ = require('lodash');
 
 const models = require("../models");
 
@@ -19,12 +20,45 @@ function getLatestNews(Model) {
         })
 }
 
-function renderNews(req, res) {
-    getLatestNews(this.Model)
+function getAllNewsGroupedByDates(Model) {
+    return Model.findAndFilter()
         .then(news => {
-            let shortNews = getNewsByType(news, true);
-            let longNews = getNewsByType(news, false);
-            res.render("newsPage", {shortNews: shortNews, longNews: longNews, title: this.Model.modelName})
+            if (news.length === 0) throw new NoNewsRecentlyError;
+            return _.groupBy(news, function (obj) {
+                let millisec = parseInt(obj._doc.dateParse);
+                return parseDate(millisec);
+            });
+        })
+}
+
+function getNewsDates(Model) {
+    return getAllNewsGroupedByDates(Model)
+        .then(news => {
+            return Object.keys(news);
+        })
+}
+
+function parseDate(milliseconds) {
+    let date = new Date(milliseconds);
+    date.setSeconds(0);
+    return date;
+}
+
+function renderLatestNews(req, res) {
+    Promise.all([getLatestNews(this.Model), getNewsDates(this.Model)])
+        .then(results => {
+            let latestNews = results[0];
+            let newsGroups = results[1];
+            console.log(newsGroups);
+            let shortNews = getNewsByType(latestNews, true);
+            let longNews = getNewsByType(latestNews, false);
+            res.render("newsPage", {
+                shortNews,
+                longNews,
+                title: this.Model.modelName,
+                newsGroups: JSON.stringify(newsGroups),
+                countGroups: newsGroups.length
+            })
         })
         .catch(() => {
             res.statusCode(500).render("error", {error: new LoadNewsError()});
@@ -35,19 +69,18 @@ function getNewsByType(newsS, isShort) {
     return newsS.filter(news => {
         return news._doc.shortNew === isShort
     });
-
 }
 
 
-router.get("/CBSS", renderNews.bind({Model: models.CBSS}));
+router.get("/CBSS", renderLatestNews.bind({Model: models.CBSS}));
 
-router.get("/Bleacher", renderNews.bind({Model: models.Bleacher}));
+router.get("/Bleacher", renderLatestNews.bind({Model: models.Bleacher}));
 
-router.get("/NBS", renderNews.bind({Model: models.NBCS}));
+router.get("/NBS", renderLatestNews.bind({Model: models.NBCS}));
 
-router.get("/SBNation", renderNews.bind({Model: models.SBNation}));
+router.get("/SBNation", renderLatestNews.bind({Model: models.SBNation}));
 
-router.get("/ESPN", renderNews.bind({Model: models.ESPN}));
+router.get("/ESPN", renderLatestNews.bind({Model: models.ESPN}));
 
 
 module.exports = router;
