@@ -5,22 +5,27 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
-<div class="site-title">
-    <h1><%= title%></h1>
-</div>
-<p>Дата новостей:
-    <input type="range" min="1" max="<%= countGroups%>" id="dates-slider" value="<%= countGroups%>">
-    <div id="date-placeholder"></div>
-</p>
+<% include navbar.ejs %>
 <div class="container">
+    <div class="site-title">
+        <h1><%= title%></h1>
+    </div>
+    <div class="filter-container">
+        <p>Дата новостей:
+            <input type="range" min="1" max="<%= countGroups%>" id="dates-slider" value="<%= countGroups%>">
+        <div id="date-placeholder"></div>
+        </p>
+    </div>
 
-    <div class="container-long-news">
-        <% longNews.map((item, i) => {%>
+    <div class="container-news">
+
+        <div class="container-long-news">
+            <% longNews.map((item, i) => {%>
             <div class="news-item shadow-wrap item-long ">
                 <% if(i === 0) {%>
-                    <div class="container-header">
-                        <h1>TOP NEWS</h1>
-                    </div>
+                <div class="container-header">
+                    <h1>TOP NEWS</h1>
+                </div>
                 <%} %>
                 <div class="container-body">
                     <div class="item-media">
@@ -38,16 +43,56 @@
 
             </div>
 
-        <%})%>
-    </div>
-    <div class="container-short-news shadow-wrap">
-        <h1>TOP HEADERS</h1>
-        <% shortNews.map(item => {%>
-        <h3><%= item._doc.title%></h3>
-        <%})%>
+            <%})%>
+        </div>
+        <% if(shortNews.length !== 0) {%>
+        <div class="container-short-news shadow-wrap">
+            <h1>TOP HEADERS</h1>
+            <% shortNews.map(item => {%>
+            <h3><%= item._doc.title%></h3>
+            <%})%>
+        </div>
+        <%} %>
+
+
     </div>
 </div>
+
 <script>
+    function renderLongNews(news){
+        let $container_long_news = $(".container-long-news");
+        $container_long_news.empty();
+        news.map(item => {
+            $container_long_news.append(`
+            <div class="news-item shadow-wrap item-long ">
+                <div class="container-body">
+                    <div class="item-media">
+                        <img src="${item.imageSrc}"  alt="${item.title}"/>
+                    </div>
+                    <div class="item-info">
+                        <div class="item-title">
+                            <h2>${item.title}</h2>
+                        </div>
+                        <div class="item-description">
+                            <p>${item.description}<%= %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>`)
+        })
+    }
+
+    function renderShortNews(news){
+        let $container_short_news = $(".container-short-news");
+        $container_short_news.empty();
+        $container_short_news.append("<h1>TOP HEADERS</h1>")
+        news.map(item => {
+            $container_short_news.append(`
+                <h3>${item.title}</h3>
+            `)
+        })
+    }
+
     function main(){
         const DATES = JSON.parse('<%- newsGroups %>');
         console.log(DATES);
@@ -58,8 +103,17 @@
             $date_placeholder.empty();
             let date = DATES[parseInt($(this).val()) -1];
             $date_placeholder.append(date);
+            $.ajax({
+                url: `${$(".site-title h1").text()}/${date}`,
+                type: "get",
+                success: function (data) {
+                    renderLongNews(data.longNews);
+                    renderShortNews(data.shortNews);
+                }
+            })
         })
     }
+
     main()
 </script>
 </body>

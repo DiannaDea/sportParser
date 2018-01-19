@@ -1,26 +1,25 @@
 body {
-    padding: 20px;
+    padding: 0;
+    margin: 0;
     font: 15px "Lucida Grande", Helvetica, Arial, sans-serif;
     background-color: #eaeaea;
     color: #3a4751;
 }
-
-a {
-    color: #00B7FF;
+.container{
+    padding: 20px;
 }
-
-.site-title{
+.site-title {
     width: 100%;
     text-align: center;
     margin-bottom: 30px;
 }
 
-.site-title h1{
+.site-title h1 {
     font-size: 2.5em;
     margin: 0;
 }
 
-.container {
+.container-news {
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -95,3 +94,42 @@ a {
     height: 100%;
     max-height: 350px;
 }
+
+/* NAVBAR */
+
+.nav {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: #3b3b3f;
+    margin: 0;
+    height: 60px;
+    padding: 0;
+    width: 100%;
+}
+
+.nav li {
+    width: 10%;
+    text-align: center;
+    font-size: 20px;
+    margin-top: 3px;
+
+}
+
+.nav a {
+    padding: 0 10px 0 0;
+    color: white;
+}
+
+.nav a, .nav a:link, .nav a:visited, .nav a:active {
+    text-decoration: none;
+    color: white;
+}
+
+.nav li:hover {
+    border-bottom: 2px solid #e1e0ff;
+}
+
+/* NAVBAR */
