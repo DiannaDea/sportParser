@@ -16,6 +16,7 @@ const CBSS = models.CBSS;
 const ESPN = models.ESPN;
 const Bleacher = models.Bleacher;
 const SBNation = models.SBNation;
+//const getModel = models.getModel;
 
 function parseCBSSPORTS(URL, $) {
     let news = [];
@@ -128,6 +129,7 @@ function parse(URL) {
     })
 }
 
+
 function getModel(siteName) {
     switch (siteName) {
         case("CBSS"):
@@ -142,6 +144,7 @@ function getModel(siteName) {
             return ESPN;
     }
 }
+
 
 function fillDB(news, siteName) {
     let Model = getModel(siteName);
@@ -166,16 +169,6 @@ function fillDB(news, siteName) {
         });
     })
 }
-
-/*
-function arrayToObject(array) {
-    let objResult = {};
-    array.forEach(obj => {
-        let siteName = Object.keys(obj)[0];
-        objResult[siteName] = obj[siteName];
-    });
-    return objResult;
-} */
 
 function getNews() {
     return Promise.all(URLS.map(URL => {

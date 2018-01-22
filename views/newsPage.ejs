@@ -2,6 +2,7 @@
 <html>
 <head>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script src="/javascript/renderNews.js" ></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
@@ -11,10 +12,14 @@
         <h1><%= title%></h1>
     </div>
     <div class="filter-container">
-        <p>Дата новостей:
-            <input type="range" min="1" max="<%= countGroups%>" id="dates-slider" value="<%= countGroups%>">
-        <div id="date-placeholder"></div>
-        </p>
+        <label for="date">Дата</label>
+        <input id="date" type="date"  value="<%= latestDate%>"/>
+        <br/>
+        <label for="dates-slider">Время</label>
+        <input type="range" min="1" max="<%= countNews%>" value="<%= countNews%>" id="dates-slider">
+        <br/><br/>
+        <div id="date-placeholder"><%= latestTime%></div>
+
     </div>
 
     <div class="container-news">
@@ -59,62 +64,12 @@
 </div>
 
 <script>
-    function renderLongNews(news){
-        let $container_long_news = $(".container-long-news");
-        $container_long_news.empty();
-        news.map(item => {
-            $container_long_news.append(`
-            <div class="news-item shadow-wrap item-long ">
-                <div class="container-body">
-                    <div class="item-media">
-                        <img src="${item.imageSrc}"  alt="${item.title}"/>
-                    </div>
-                    <div class="item-info">
-                        <div class="item-title">
-                            <h2>${item.title}</h2>
-                        </div>
-                        <div class="item-description">
-                            <p>${item.description}<%= %></p>
-                        </div>
-                    </div>
-                </div>
-            </div>`)
-        })
-    }
-
-    function renderShortNews(news){
-        let $container_short_news = $(".container-short-news");
-        $container_short_news.empty();
-        $container_short_news.append("<h1>TOP HEADERS</h1>")
-        news.map(item => {
-            $container_short_news.append(`
-                <h3>${item.title}</h3>
-            `)
-        })
-    }
-
-    function main(){
-        const DATES = JSON.parse('<%- newsGroups %>');
-        console.log(DATES);
-        const $date_placeholder = $("#date-placeholder");
-        $date_placeholder.append(DATES[DATES.length-1])
-
-        $("#dates-slider").change(function () {
-            $date_placeholder.empty();
-            let date = DATES[parseInt($(this).val()) -1];
-            $date_placeholder.append(date);
-            $.ajax({
-                url: `${$(".site-title h1").text()}/${date}`,
-                type: "get",
-                success: function (data) {
-                    renderLongNews(data.longNews);
-                    renderShortNews(data.shortNews);
-                }
-            })
-        })
-    }
-
-    main()
+    $( document ).ready(function(){
+        let datesAndTimes = JSON.parse('<%- datesAndTimesNews%>');
+        let date = '<%- latestDate %>';
+        let time = '<%- latestTime%>';
+        startRenderNews(date, time, datesAndTimes);
+    });
 </script>
 </body>
 </html>

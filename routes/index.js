@@ -6,6 +6,7 @@ const _ = require('lodash');
 
 const models = require("../models");
 
+
 router.get('/', function (req, res) {
     res.render('index', {title: 'Express'});
 });
@@ -14,17 +15,31 @@ function getAllNewsGroupedByDates(Model) {
     return Model.findAndFilter()
         .then(news => {
             if (news.length === 0) throw new NoNewsRecentlyError;
-            return _.groupBy(news, function (obj) {
+            let groupedByDate =  _.groupBy(news, function (obj) {
                 let millisec = parseInt(obj._doc.dateParse);
                 return parseDate(millisec);
             });
+            for(let date in groupedByDate){
+                let groupedByTime = _.groupBy(groupedByDate[date], function (obj) {
+                    let millisec = parseInt(obj._doc.dateParse);
+                    return parseTime(millisec);
+                });
+                groupedByDate[date] = groupedByTime;
+            }
+            //console.log(groupedByDate);
+            return groupedByDate;
+
         })
 }
 
 function parseDate(milliseconds) {
     let date = new Date(milliseconds);
-    date.setSeconds(0);
-    return date;
+    return date.getFullYear() + "-" + (((date.getMonth() + 1) < 10) ? "0" : "") + (date.getMonth() + 1) + "-" + ((date.getDate() < 10) ? "0" : "") + date.getDate();
+}
+
+function parseTime(milliseconds){
+    let date = new Date(milliseconds);
+    return ((date.getHours() < 10) ? "0" : "") + date.getHours() + ":" + ((date.getMinutes() < 10) ? "0" : "") + date.getMinutes() + ":00"
 }
 
 function getNewsByType(newsS, isShort) {
@@ -48,19 +63,40 @@ function getModel(siteName) {
     }
 }
 
+function getDateAndTimeRanges(news){
+    let datesAndTimes = {};
+    let newsDates = Object.keys(news);
+    newsDates.map(date => {
+        datesAndTimes[date] = Object.keys(news[date])
+    });
+    return datesAndTimes;
+}
+
 function renderLatestNews(req, res) {
     getAllNewsGroupedByDates(this.Model)
         .then(news => {
-            let newsGroups = Object.keys(news);
-            let latestNews = news[newsGroups[newsGroups.length - 1]];
+            let dateAndTimeNews = getDateAndTimeRanges(news);
+
+            let datesOfNews = Object.keys(dateAndTimeNews);
+            let latestDate = datesOfNews[datesOfNews.length - 1];
+
+
+            let timesOfLatestNews = dateAndTimeNews[latestDate];
+
+            let latestTime = timesOfLatestNews[timesOfLatestNews.length-1];
+
+            let latestNews = news[latestDate][latestTime];
+
             let shortNews = getNewsByType(latestNews, true);
             let longNews = getNewsByType(latestNews, false);
             res.render("newsPage", {
                 shortNews,
                 longNews,
+                latestDate,
+                latestTime,
+                countNews : latestNews.length,
                 title: this.Model.modelName,
-                newsGroups: JSON.stringify(newsGroups),
-                countGroups: newsGroups.length
+                datesAndTimesNews : JSON.stringify(dateAndTimeNews)
             })
         })
         .catch(() => {
@@ -72,7 +108,7 @@ function renderFilteredNews(req, res) {
     let Model = getModel(req.params.siteName);
     getAllNewsGroupedByDates(Model)
         .then(news => {
-            let selectedNews = news[new Date(req.params.date)];
+            let selectedNews = news[req.params.date][req.params.time];
             let shortNews = getNewsByType(selectedNews, true);
             let longNews = getNewsByType(selectedNews, false);
             res.send({shortNews, longNews})
@@ -81,6 +117,7 @@ function renderFilteredNews(req, res) {
             res.statusCode(500).render("error", {error: new LoadNewsError()});
         });
 }
+
 
 router.get("/CBSS", renderLatestNews.bind({Model: models.CBSS}));
 
@@ -92,7 +129,6 @@ router.get("/SBNation", renderLatestNews.bind({Model: models.SBNation}));
 
 router.get("/ESPN", renderLatestNews.bind({Model: models.ESPN}));
 
-
-router.get("/:siteName/:date", renderFilteredNews);
+router.get("/:siteName/:date/:time", renderFilteredNews);
 
 module.exports = router;
