@@ -19,15 +19,17 @@ function getAllNewsGroupedByDates(Model) {
                 let millisec = parseInt(obj._doc.dateParse);
                 return parseDate(millisec);
             });
+
+            let groupedByDatesAndTime = {};
             for(let date in groupedByDate){
                 let groupedByTime = _.groupBy(groupedByDate[date], function (obj) {
                     let millisec = parseInt(obj._doc.dateParse);
                     return parseTime(millisec);
                 });
-                groupedByDate[date] = groupedByTime;
+                groupedByDatesAndTime[date] = groupedByTime;
             }
-            //console.log(groupedByDate);
-            return groupedByDate;
+
+            return groupedByDatesAndTime;
 
         })
 }
@@ -39,7 +41,9 @@ function parseDate(milliseconds) {
 
 function parseTime(milliseconds){
     let date = new Date(milliseconds);
-    return ((date.getHours() < 10) ? "0" : "") + date.getHours() + ":" + ((date.getMinutes() < 10) ? "0" : "") + date.getMinutes() + ":00"
+    let temp = ((date.getHours() < 10) ? "0" : "") + date.getHours() + ":" + ((date.getMinutes() < 10) ? "0" : "") + date.getMinutes() + ":00"
+
+    return temp;
 }
 
 function getNewsByType(newsS, isShort) {
@@ -76,7 +80,7 @@ function renderLatestNews(req, res) {
     getAllNewsGroupedByDates(this.Model)
         .then(news => {
             let dateAndTimeNews = getDateAndTimeRanges(news);
-
+            //console.log(dateAndTimeNews);
             let datesOfNews = Object.keys(dateAndTimeNews);
             let latestDate = datesOfNews[datesOfNews.length - 1];
 
@@ -94,7 +98,7 @@ function renderLatestNews(req, res) {
                 longNews,
                 latestDate,
                 latestTime,
-                countNews : latestNews.length,
+                countNews : timesOfLatestNews.length,
                 title: this.Model.modelName,
                 datesAndTimesNews : JSON.stringify(dateAndTimeNews)
             })
@@ -108,7 +112,9 @@ function renderFilteredNews(req, res) {
     let Model = getModel(req.params.siteName);
     getAllNewsGroupedByDates(Model)
         .then(news => {
+
             let selectedNews = news[req.params.date][req.params.time];
+
             let shortNews = getNewsByType(selectedNews, true);
             let longNews = getNewsByType(selectedNews, false);
             res.send({shortNews, longNews})

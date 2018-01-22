@@ -65,6 +65,7 @@ function startRenderNews(date, time, datesAndTimes){
 
     $("#dates-slider").change(function () {
         $date_placeholder.empty();
+        console.log($(this).val())
         time = selectedTimes[parseInt($(this).val()) - 1];
         $date_placeholder.append(time);
         handleDateAndTimeChange(date, time);
