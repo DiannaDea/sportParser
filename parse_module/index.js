@@ -16,7 +16,7 @@ const CBSS = models.CBSS;
 const ESPN = models.ESPN;
 const Bleacher = models.Bleacher;
 const SBNation = models.SBNation;
-//const getModel = models.getModel;
+
 
 function parseCBSSPORTS(URL, $) {
     let news = [];
@@ -26,13 +26,16 @@ function parseCBSSPORTS(URL, $) {
         let imageURL = $(this).prev().css("background-image").trim();
         let index = imageURL.indexOf("https");
         let imageSrc = imageURL.slice(index, -2);
-        news.push({title, description, imageSrc});
+        let link = "https://www.cbssports.com" + $(this).parent().parent().attr("href");
+        news.push({title, description, imageSrc, link});
     });
     $(".article-list-stack-item-title").each(function (item) {
+        let link = "https://www.cbssports.com" + $(this).parent().attr("href");
+
         title = $(this).text().trim();
         imageSrc = "";
         description = "";
-        news.push({title, description, imageSrc});
+        news.push({title, description, imageSrc, link});
     });
     return news;
 }
@@ -41,23 +44,49 @@ function parseBLEACHER(URL, $) {
     let news = [];
     $(".featuredArticles ol li").each(function (item) {
         let title = $(this).children(".articleContent ").text();
+        let link = $(this).find(".articleContent a").attr("href");
         let imageSrc = $(this).children(".articleMedia").find("img").attr("src");
-        news.push({title, imageSrc, description: ""});
+        imageSrc = getBiggerImage(imageSrc);
+        news.push({title, imageSrc, description: "", link});
     });
     return news;
+}
+
+function getBiggerImage(imageSrc) {
+    let srcArr = imageSrc.split("?");
+
+    let srcEnd = srcArr[1];
+    let srcEndArr = srcEnd.split("&");
+
+    let width = srcEndArr[0].split("=");
+    let widCur = width[1] + "0";
+    width[1] = widCur;
+
+    let height = srcEndArr[1].split("=");
+    let heiCur = height[1] + "0";
+    height[1] = heiCur;
+
+
+    srcEndArr[0] = width.join("=");
+    srcEndArr[1] = height.join("=");
+
+    srcEnd = srcEndArr.join("&");
+    return srcArr[0] + "?" + srcEnd;
 }
 
 function parseNBC(URL, $) {
     let news = [];
     $(".top-stories .list-item .story").each(function (item) {
         let title = $(this).children(".story__title").text().trim();
+        let link = $(this).children(".story__title").find("a").attr("href");
         let description = $(this).children(".story__text").text().trim();
         let imageSrc = $(this).children(".story__image").find("img").attr('src');
-        news.push({title, imageSrc, description});
+        news.push({title, imageSrc, description, link});
     });
     $(".more-headlines__list li").each(function (item) {
+        let link =$(this).children("a").attr("href");
         title = $(this).text().trim();
-        news.push({title, imageSrc: "", description: ""});
+        news.push({title, imageSrc: "", description: "", link});
     });
     return news;
 }
@@ -66,11 +95,12 @@ function parseSBNation(URL, $) {
     let news = [];
     $(".c-compact-river__entry").each(function (item) {
         let title = $(this).find(".c-entry-box--compact__title").text().trim();
+        let link = $(this).find(".c-entry-box--compact__title a").attr("href");
         let imageTag = $(this).find(".c-entry-box--compact__image noscript").text();
         let indexStart = imageTag.indexOf("https");
         let indexEnd = imageTag.indexOf("alt");
         let imageSrc = imageTag.slice(indexStart, indexEnd - 2);
-        news.push({title, imageSrc, description: ""});
+        news.push({title, imageSrc, description: "", link });
     });
     return news;
 }
@@ -78,19 +108,26 @@ function parseSBNation(URL, $) {
 function parseESPN(URL, $) {
     let news = [];
     $(".contentCollection--hero .contentItem").each(function (item) {
-        let title, description = "", imageScr = "";
+        let title, description = "", imageScr = "", link;
         if ($(this).find(".headlineStack").length) {
             $(this).find("li").each(function (item) {
                 title = $(this).find("a").text();
+                link = $(this).find("a").attr("href");
             })
         }
         else {
             title = $(this).find(".contentItem__title").text().trim();
             description = $(this).find(".contentItem__subhead").text().trim();
-            imageSrc = $(this).find(".media-wrapper").find("img").attr("data-default-src");
+            imageSrc = $(this).find(".media-wrapper").find("img").attr("data-default-src")
+            link = "";
         }
         news.push({title, description, imageSrc});
-    })
+    });
+    $(".headlineStack__listContainer .headlineStack__list li").each(function(item){
+        let title = $(this).text().trim();
+        let link = "http://www.espn.com" + $(this).find("a").attr("href");
+        news.push({title, description: "", imageSrc : "", link})
+    });
     return news;
 }
 
@@ -129,7 +166,6 @@ function parse(URL) {
     })
 }
 
-
 function getModel(siteName) {
     switch (siteName) {
         case("CBSS"):
@@ -145,7 +181,6 @@ function getModel(siteName) {
     }
 }
 
-
 function fillDB(news, siteName) {
     let Model = getModel(siteName);
     news.map((item, i) => {
@@ -153,15 +188,18 @@ function fillDB(news, siteName) {
         if (item.imageSrc === "" && item.description === "") {
             newsItem = new Model({
                 title: item.title,
-                shortNew: true
+                shortNew: true,
+                link: item.link
             });
         }
         else {
             newsItem = new Model({
                 title: item.title,
+                link: item.link,
                 shortNew: false,
                 description: item.description,
-                imageSrc: item.imageSrc
+                imageSrc: item.imageSrc,
+
             });
         }
         newsItem.save(function (err, newsItem) {

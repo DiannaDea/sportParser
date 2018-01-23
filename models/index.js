@@ -7,7 +7,8 @@ const schemaDB = {
     title: String,
     description: String,
     imageSrc: String,
-    dateParse: {type: Number, default: Date.now}
+    dateParse: {type: Number, default: Date.now},
+    link : String
 };
 
 const NBCSS = new Schema(schemaDB);
@@ -22,26 +23,11 @@ ESPN.plugin(mongooseFindAndFilter);
 Bleacher.plugin(mongooseFindAndFilter);
 SBNation.plugin(mongooseFindAndFilter);
 
-function getModel(siteName) {
-    switch (siteName) {
-        case("CBSS"):
-            return CBSS;
-        case("BLEACHER"):
-            return Bleacher;
-        case("NBCS"):
-            return NBCSS;
-        case("SBNation"):
-            return SBNation;
-        case("ESPN"):
-            return ESPN;
-    }
-}
 
 module.exports = {
     NBCS: mongoose.model('NBCS', NBCSS),
     CBSS: mongoose.model('CBSS', CBSS),
     ESPN: mongoose.model('ESPN', ESPN),
     Bleacher: mongoose.model('Bleacher', Bleacher),
-    SBNation: mongoose.model('SBNation', SBNation),
-    getModel : getModel
+    SBNation: mongoose.model('SBNation', SBNation)
 };

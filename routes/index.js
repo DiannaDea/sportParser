@@ -28,7 +28,7 @@ function getAllNewsGroupedByDates(Model) {
                 });
                 groupedByDatesAndTime[date] = groupedByTime;
             }
-
+            //console.log(groupedByDatesAndTime);
             return groupedByDatesAndTime;
 
         })
@@ -112,9 +112,7 @@ function renderFilteredNews(req, res) {
     let Model = getModel(req.params.siteName);
     getAllNewsGroupedByDates(Model)
         .then(news => {
-
             let selectedNews = news[req.params.date][req.params.time];
-
             let shortNews = getNewsByType(selectedNews, true);
             let longNews = getNewsByType(selectedNews, false);
             res.send({shortNews, longNews})
