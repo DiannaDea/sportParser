@@ -21,6 +21,14 @@
         <div id="date-placeholder"><%= latestTime%></div>
 
     </div>
+    <div class="search-container">
+        <form method="post" action="/search">
+            <label for="keywords">Найти</label>
+
+            <input type="text" name="keywords" id="keywords" placeholder="News keywords..."/>
+            <input type="submit" value="Найти">
+        </form>
+    </div>
 
     <div class="container-news">
 

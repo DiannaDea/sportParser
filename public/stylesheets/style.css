@@ -147,3 +147,17 @@ body {
 }
 
 /* NAVBAR */
+
+.container-searched-news{
+    padding: 50px;
+    background-color: white;
+}
+
+.container-searched-news-body{
+    margin-bottom: 50px;
+}
+
+.container-searched-news a{
+    color: #0086b2;
+    text-decoration: none;
+}

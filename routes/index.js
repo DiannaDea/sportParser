@@ -15,20 +15,19 @@ function getAllNewsGroupedByDates(Model) {
     return Model.findAndFilter()
         .then(news => {
             if (news.length === 0) throw new NoNewsRecentlyError;
-            let groupedByDate =  _.groupBy(news, function (obj) {
+            let groupedByDate = _.groupBy(news, function (obj) {
                 let millisec = parseInt(obj._doc.dateParse);
                 return parseDate(millisec);
             });
 
             let groupedByDatesAndTime = {};
-            for(let date in groupedByDate){
+            for (let date in groupedByDate) {
                 let groupedByTime = _.groupBy(groupedByDate[date], function (obj) {
                     let millisec = parseInt(obj._doc.dateParse);
                     return parseTime(millisec);
                 });
                 groupedByDatesAndTime[date] = groupedByTime;
             }
-            //console.log(groupedByDatesAndTime);
             return groupedByDatesAndTime;
 
         })
@@ -39,7 +38,7 @@ function parseDate(milliseconds) {
     return date.getFullYear() + "-" + (((date.getMonth() + 1) < 10) ? "0" : "") + (date.getMonth() + 1) + "-" + ((date.getDate() < 10) ? "0" : "") + date.getDate();
 }
 
-function parseTime(milliseconds){
+function parseTime(milliseconds) {
     let date = new Date(milliseconds);
     let temp = ((date.getHours() < 10) ? "0" : "") + date.getHours() + ":" + ((date.getMinutes() < 10) ? "0" : "") + date.getMinutes() + ":00"
 
@@ -67,7 +66,7 @@ function getModel(siteName) {
     }
 }
 
-function getDateAndTimeRanges(news){
+function getDateAndTimeRanges(news) {
     let datesAndTimes = {};
     let newsDates = Object.keys(news);
     newsDates.map(date => {
@@ -80,14 +79,13 @@ function renderLatestNews(req, res) {
     getAllNewsGroupedByDates(this.Model)
         .then(news => {
             let dateAndTimeNews = getDateAndTimeRanges(news);
-            //console.log(dateAndTimeNews);
             let datesOfNews = Object.keys(dateAndTimeNews);
             let latestDate = datesOfNews[datesOfNews.length - 1];
 
 
             let timesOfLatestNews = dateAndTimeNews[latestDate];
 
-            let latestTime = timesOfLatestNews[timesOfLatestNews.length-1];
+            let latestTime = timesOfLatestNews[timesOfLatestNews.length - 1];
 
             let latestNews = news[latestDate][latestTime];
 
@@ -98,9 +96,9 @@ function renderLatestNews(req, res) {
                 longNews,
                 latestDate,
                 latestTime,
-                countNews : timesOfLatestNews.length,
+                countNews: timesOfLatestNews.length,
                 title: this.Model.modelName,
-                datesAndTimesNews : JSON.stringify(dateAndTimeNews)
+                datesAndTimesNews: JSON.stringify(dateAndTimeNews)
             })
         })
         .catch(() => {
@@ -123,6 +121,54 @@ function renderFilteredNews(req, res) {
 }
 
 
+function searchModelNews(Model, param) {
+    return Model.find({title: {$regex: '.*' + param + '.*', $options: 'i'}})
+        .then(news => {
+            return new Promise(function (resolve) {
+                resolve({[Model.modelName]: news});
+            })
+        })
+}
+
+function searchAllNews(param) {
+    return Promise.all(Object.keys(models).map(modelName => {
+        return searchModelNews(models[modelName], param)
+    }));
+}
+
+function convertArrNewsToObj(arrayNews) {
+    let objNews = {};
+    arrayNews.forEach(obj => {
+        let siteName = Object.keys(obj)[0];
+        if (obj[siteName].length !== 0) {
+            objNews[siteName] = obj[siteName]
+        }
+    });
+    return objNews;
+}
+
+function searchUniqueNews(newsS) {
+    let resultSearch = {};
+    for (let siteName in newsS) {
+        let sortedNewsDesc = _.orderBy(newsS[siteName], ['dateParse'], ['desc']);
+        let searchedNews = _.uniqBy(sortedNewsDesc, function (obj) {
+            return obj.title;
+        });
+        resultSearch[siteName] = searchedNews
+    }
+    return resultSearch;
+}
+
+function renderSearchedNews(req, res) {
+    searchAllNews(req.body.keywords)
+        .then(result => {
+            let newsObject = convertArrNewsToObj(result);
+            let uniqueNews = searchUniqueNews(newsObject);
+            res.render("searchResults", {resultNews: uniqueNews})
+        })
+}
+
+
 router.get("/CBSS", renderLatestNews.bind({Model: models.CBSS}));
 
 router.get("/Bleacher", renderLatestNews.bind({Model: models.Bleacher}));
@@ -134,5 +180,7 @@ router.get("/SBNation", renderLatestNews.bind({Model: models.SBNation}));
 router.get("/ESPN", renderLatestNews.bind({Model: models.ESPN}));
 
 router.get("/:siteName/:date/:time", renderFilteredNews);
+
+router.post("/search", renderSearchedNews);
 
 module.exports = router;

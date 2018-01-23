@@ -49,6 +49,11 @@ function parseBLEACHER(URL, $) {
         imageSrc = getBiggerImage(imageSrc);
         news.push({title, imageSrc, description: "", link});
     });
+    $(".headlinesArticles li").each(function (item) {
+        let title = $(this).children(".articleContent").text();
+        let link = $(this).children(".articleContent").find("a").attr("href");
+        news.push({title, imageSrc: "", description: "", link});
+    });
     return news;
 }
 
@@ -207,6 +212,7 @@ function fillDB(news, siteName) {
         });
     })
 }
+
 
 function getNews() {
     return Promise.all(URLS.map(URL => {
