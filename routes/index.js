@@ -55,7 +55,7 @@ function getModel(siteName) {
     switch (siteName) {
         case("CBSS"):
             return models.CBSS;
-        case("BLEACHER"):
+        case("Bleacher"):
             return models.Bleacher;
         case("NBCS"):
             return models.NBCS;
@@ -102,7 +102,7 @@ function renderLatestNews(req, res) {
             })
         })
         .catch(() => {
-            res.statusCode(500).render("error", {error: new LoadNewsError()});
+            res.status(500).render("error", {error: new LoadNewsError()});
         });
 }
 
@@ -116,7 +116,7 @@ function renderFilteredNews(req, res) {
             res.send({shortNews, longNews})
         })
         .catch(() => {
-            res.statusCode(500).render("error", {error: new LoadNewsError()});
+            res.status(500).render("error", {error: new LoadNewsError()});
         });
 }
 
@@ -164,6 +164,7 @@ function renderSearchedNews(req, res) {
         .then(result => {
             let newsObject = convertArrNewsToObj(result);
             let uniqueNews = searchUniqueNews(newsObject);
+            //console.log(uniqueNews);
             res.render("searchResults", {resultNews: uniqueNews})
         })
 }

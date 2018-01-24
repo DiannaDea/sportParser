@@ -46,8 +46,13 @@ function parseBLEACHER(URL, $) {
         let title = $(this).children(".articleContent ").text();
         let link = $(this).find(".articleContent a").attr("href");
         let imageSrc = $(this).children(".articleMedia").find("img").attr("src");
-        imageSrc = getBiggerImage(imageSrc);
-        news.push({title, imageSrc, description: "", link});
+        if(imageSrc !== undefined){
+            imageSrc = getBiggerImage(imageSrc);
+            news.push({title, imageSrc, description: "", link});
+        }
+        else{
+            news.push({title, imageSrc: "", description: "", link});
+        }
     });
     $(".headlinesArticles li").each(function (item) {
         let title = $(this).children(".articleContent").text();
@@ -113,20 +118,24 @@ function parseSBNation(URL, $) {
 function parseESPN(URL, $) {
     let news = [];
     $(".contentCollection--hero .contentItem").each(function (item) {
-        let title, description = "", imageScr = "", link;
-        if ($(this).find(".headlineStack").length) {
-            $(this).find("li").each(function (item) {
-                title = $(this).find("a").text();
-                link = $(this).find("a").attr("href");
-            })
+        let link, title, imageSrc, description;
+        if($(this).children("a").attr("href") !== undefined){
+            link = "http://www.espn.com" + $(this).children("a").attr("href");
         }
-        else {
-            title = $(this).find(".contentItem__title").text().trim();
-            description = $(this).find(".contentItem__subhead").text().trim();
-            imageSrc = $(this).find(".media-wrapper").find("img").attr("data-default-src")
-            link = "";
+        else if($(this).find(".contentItem__contnent a").attr("href") !== undefined){
+            link = "http://www.espn.com" + $(this).find("section a").attr("href");
         }
-        news.push({title, description, imageSrc});
+        else if($(this).find("header a").attr("href") !== undefined){
+            link = "http://www.espn.com" + $(this).find("header a").attr("href");
+        }
+        else{
+            return;
+        }
+
+        title = $(this).find(".contentItem__title").text().trim();
+        description = $(this).find(".contentItem__subhead").text().trim();
+        imageSrc = $(this).find(".media-wrapper").find("img").attr("data-default-src")
+        news.push({title, description, imageSrc, link});
     });
     $(".headlineStack__listContainer .headlineStack__list li").each(function(item){
         let title = $(this).text().trim();
@@ -227,3 +236,4 @@ function getNews() {
 }
 
 module.exports = getNews;
+
