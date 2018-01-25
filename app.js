@@ -3,9 +3,10 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
+const schedule = require('node-schedule');
 const session = require('client-sessions');
 const Admin = require("./models/admin");
+const getNews = require("./parse_module");
 
 
 
@@ -42,6 +43,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+
+
 app.use(session({
     cookieName: 'session',
     secret: 'random_string_goes_here',
@@ -62,6 +66,21 @@ app.use(function (req, res, next) {
     else {
         next();
     }
+});
+
+app.use(function (req, res, next) {
+    if(req.session.admin === undefined ){
+        if(req.url === "/admin" || req.url === "/admin/login"){
+            next()
+        }
+        else{
+            res.render("./admin/authErr");
+        }
+    }
+    else{
+        next()
+    }
+
 });
 
 app.use('/admin', adminRouter);
@@ -85,7 +104,9 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-
+schedule.scheduleJob(" */20 * * * *", function () {
+    getNews();
+});
 
 
 

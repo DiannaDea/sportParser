@@ -76,6 +76,7 @@ function getDateAndTimeRanges(news) {
 }
 
 function renderLatestNews(req, res) {
+
     getAllNewsGroupedByDates(this.Model)
         .then(news => {
             let dateAndTimeNews = getDateAndTimeRanges(news);
@@ -94,6 +95,7 @@ function renderLatestNews(req, res) {
             res.render("newsPage", {
                 shortNews,
                 longNews,
+                countLong: longNews.length,
                 latestDate,
                 latestTime,
                 countNews: timesOfLatestNews.length,
@@ -112,8 +114,10 @@ function renderFilteredNews(req, res) {
         .then(news => {
             let selectedNews = news[req.params.date][req.params.time];
             let shortNews = getNewsByType(selectedNews, true);
+
             let longNews = getNewsByType(selectedNews, false);
-            res.send({shortNews, longNews})
+            console.log(longNews.length);
+            res.send({shortNews, longNews, countLong: longNews.length})
         })
         .catch(() => {
             res.status(500).render("error", {error: new LoadNewsError()});

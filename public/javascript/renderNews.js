@@ -40,8 +40,12 @@ function handleDateAndTimeChange(date, time){
     $.ajax({
         url: `${$(".site-title h1").text()}/${date}/${time}`,
         type: "get",
+        beforeSend: function () {
+            $(".loader").css("display", "inline-block");
+        },
         success: function (data) {
             console.log(data);
+            $(".loader").css("display", "none");
             renderLongNews(data.longNews);
             renderShortNews(data.shortNews);
         }
@@ -101,7 +105,3 @@ function startRenderNews(date, time, datesAndTimes){
     })
 }
 
-/*
-https://img.bleacherreport.net/cms/media/image/9f/49/9c/6f/9fcd/42b4/bbf8/f7f83c3b5d20/crop_exact_GettyImages-900931516.jpg?h=500&w=970&q=70&crop_x=center&crop_y=top
-https://img.bleacherreport.net/cms/media/image/9f/49/9c/6f/9fcd/42b4/bbf8/f7f83c3b5d20/crop_exact_GettyImages-900931516.jpg?h=50&w=97&q=70&crop_x=center&crop_y=top
-*/

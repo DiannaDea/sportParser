@@ -10,13 +10,15 @@ function handleAdminLogin() {
             },
             statusCode: {
                 200: function () {
-                    $("#res").html("<p>Вход выполнен</p>");
+                    $("#res-success").css("display", "block");
+                    $("#res-danger").css("display", "none");
                     setTimeout(() => {
                         window.location.replace(`/admin/${$("#login").val()}`);
-                    }, 0);
+                    }, 1000);
                 },
                 401: function () {
-                    $("#res").html("<p>Такого пользователя не существует</p>");
+                    $("#res-success").css("display", "none");
+                    $("#res-danger").css("display", "block");
                     $("#login").val("");
                     $("#password").val("");
                 }

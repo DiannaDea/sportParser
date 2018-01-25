@@ -1,24 +1,27 @@
 <html>
 <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel='stylesheet' href='/stylesheets/style.css' />
 
 </head>
 <body>
 <% include navbar.ejs %>
 <div class="container">
-    <div class="container-searched-news shadow-wrap">
+    <div class="container-searched-news">
         <% for(let siteName in resultNews){ %>
-        <div class="container-searched-header">
-            <h3><%= siteName + " : найдено " + resultNews[siteName].length + " результата (ов)" %></h3>
-        </div>
-        <div class="container-searched-news-body">
-            <% resultNews[siteName].map(item=>  {%>
-            <div class="searched-item">
-                <a href="<%= item.link%>"><p><%= item.title%></p></a>
-            </div>
+            <div class="shadow-wrap container-search">
+                <div class="container-searched-header">
+                    <h3><%= siteName + " : найдено " + resultNews[siteName].length + " результата (ов)" %></h3>
+                </div>
+                <div class="container-searched-news-body">
+                    <% resultNews[siteName].map(item=>  {%>
+                    <div class="searched-item">
+                        <a href="<%= item.link%>"><p><%= item.title%></p></a>
+                    </div>
 
-            <%}) %>
-        </div>
+                    <%}) %>
+                </div>
+            </div>
         <%}%>
     </div>
 </div>

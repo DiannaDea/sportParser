@@ -5,8 +5,8 @@ body {
     background-color: #eaeaea;
     color: #3a4751;
 }
-.container{
-    padding: 20px;
+.container-main{
+    padding: 30px;
 }
 .site-title {
     width: 100%;
@@ -23,7 +23,7 @@ body {
     width: 100%;
     display: flex;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
 .container-header {
@@ -37,7 +37,47 @@ body {
     color: sandybrown;
     font-size: 2.5em;
 }
+.settings-container{
+    padding-top: 7px;
+    width: 100%;
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: row;
+}
 
+.filter-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 70%;
+    height: 100%;
+}
+
+
+.filter{
+    width: 30% ;
+    height: 100%;
+}
+
+
+.search-container{
+
+    width: 30%;
+    height: 100%;
+}
+
+.container-time{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+#date-placeholder{
+    font-size: 23px;
+}
+.container-time div{
+    width: 40%;
+}
 .container-body {
     width: 100%;
     height: 90%;
@@ -56,11 +96,11 @@ body {
     -webkit-box-shadow: 2px 0px 58px -14px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 2px 0px 58px -14px rgba(0, 0, 0, 0.75);
     box-shadow: 2px 0px 58px -14px rgba(61, 61, 61, 0.50);
-
+    background-color: white;
 }
 
 .container-short-news {
-    width: 26%;
+    width: 30%;
     height: 100%;
     background-color: white;
     padding: 10px 20px;
@@ -143,14 +183,16 @@ body {
 }
 
 .nav li:hover {
+    color: #3b3b3f; !important;
     border-bottom: 2px solid #e1e0ff;
 }
-
+ .nav a:hover{
+     color: #3b3b3f; !important;
+ }
 /* NAVBAR */
 
 .container-searched-news{
     padding: 50px;
-    background-color: white;
 }
 
 .container-searched-news-body{
@@ -160,4 +202,42 @@ body {
 .container-searched-news a{
     color: #0086b2;
     text-decoration: none;
+}
+
+.loader {
+    display: none;
+
+    border: 7px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 7px solid #3498db;
+    width: 50px;
+    height: 50px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.container-admin{
+    margin-top: 50px;
+    height: 100%;
+    padding: 30px 50px;
+
+}
+.mybtn-width-100{
+    width: 32.5%;
+}
+
+.container-search{
+    padding: 30px ;
+    margin-bottom: 30px;
 }

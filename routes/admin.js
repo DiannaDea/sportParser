@@ -105,10 +105,18 @@ router.post("/startParse", function (req, res) {
     }
     console.log(timeParse);
 
-    const timer = schedule.scheduleJob(timeParse, function () {
+    schedule.scheduleJob("parseTime", timeParse, function () {
         getNews();
     });
+    console.log("Parsing started, time: " + parseTime);
     res.status(200).send("Parsing started")
+});
+
+router.post("/stopParse", function (req, res) {
+    const timer = schedule.scheduledJobs["parseTime"];
+    timer.cancel();
+    console.log("Parsing stopped");
+    res.status(200).send("Parsing stopped")
 });
 
 module.exports = router;

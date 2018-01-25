@@ -1,20 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="/javascript/adminLogin.js" ></script>
 </head>
 <body>
     <% include ../navbar.ejs %>
-    <label for="login">Логин</label>
-    <input type="text" name="login" id="login"/>
-    <br/><br/>
-    <label for="password">Пароль</label>
-    <input type="text" name="password" id="password"/>
-    <br/><br/>
-    <input type="button" value="Login" id="btn-login">
-    <div id="res"></div>
+    <div class="">
+            <div class="col-sm-3"></div>
+            <div class="col-sm-6 container-admin shadow-wrap">
+                <div style="display: none" id="res-success" class="alert alert-success">
+                    <strong>Ура!</strong> Вход выполнен.
+                </div>
+                <div style="display: none" id="res-danger" class="alert alert-danger">
+                    <strong>Ошибка!</strong> Такого пользователя не существует.
+                </div>
+                <h1>Войдите в учетную запись</h1>
+                <form method="post" action="/admin/login">
+                    <div class="form-group">
+                        <label for="login">Логин</label>
+                        <input placeholder="Введите логин" class="form-control" type="text" name="login" id="login">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Пароль</label>
+                        <input placeholder="Введите пароль" class="form-control" type="password" type="text" name="password" id="password">
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control btn btn-success" id="btn-login" type="button" value="Войти">
+                    </div>
+                </form>
+
+
+            </div>
+            <div class="col-sm-3"></div>
+        </div>
+    </div>
+
+
 </body>
 <script>
     handleAdminLogin();

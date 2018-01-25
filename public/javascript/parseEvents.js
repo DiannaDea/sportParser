@@ -27,7 +27,12 @@ function handleParseEvents(adminName) {
             data: dataForServer,
             statusCode: {
                 200: function () {
-                    $("#res").html("<p>Время парсинга успешно изменено</p>");
+                    $("#res").css("display", "block");
+                    $("#res").text("Время парсинга успешно изменено");
+                    setTimeout(function () {
+                        $("#res").css("display", "none");
+                    }, 2000)
+
                 },
             }
         })
@@ -39,8 +44,29 @@ function handleParseEvents(adminName) {
             type: "post",
             statusCode: {
                 200: function () {
+                    $("#res").css("display", "block");
                     $("#res").empty();
-                    $("#res").html("<p>Парсинг начался</p>");
+                    $("#res").text("Парсинг начался");
+                    setTimeout(function () {
+                        $("#res").css("display", "none");
+                    }, 2000)
+                },
+            }
+        })
+    })
+
+    $("#btn-stop-parse").click(function () {
+        $.ajax({
+            url: `/admin/stopParse`,
+            type: "post",
+            statusCode: {
+                200: function () {
+                    $("#res").css("display", "block");
+                    $("#res").empty();
+                    $("#res").text("Парсинг остановлен");
+                    setTimeout(function () {
+                        $("#res").css("display", "none");
+                    }, 2000)
                 },
             }
         })

@@ -1,60 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-    <script src="/javascript/renderNews.js" ></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <script src="/javascript/renderNews.js"></script>
+
+
 </head>
 <body>
 <% include navbar.ejs %>
-<div class="container">
+<div class="container-main">
+
     <div class="site-title">
         <h1><%= title%></h1>
     </div>
-    <div class="filter-container">
-        <label for="date">Дата</label>
-        <input id="date" type="date"  value="<%= latestDate%>"/>
-        <br/>
-        <label for="dates-slider">Время</label>
-        <input type="range" min="1" max="<%= countNews%>" value="<%= countNews%>" id="dates-slider">
-        <br/><br/>
-        <div id="date-placeholder"><%= latestTime%></div>
+    <div class="settings-container shadow-wrap">
+        <div class="filter-container">
+            <div class="filter container-date">
+                <div class="form-group">
+                    <label for="date">Выберете дату</label>
+                      <div class="input-group">
 
-    </div>
-    <div class="search-container">
-        <form method="post" action="/search">
-            <label for="keywords">Найти</label>
+                          <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                        <input id="date" class="form-control" type="date"  value="<%= latestDate%>"/>
+                    </div>
+                </div>
+            </div>
+            <div class="filter container-time-choose">
+                <div class="form-group">
+                    <label for="dates-slider">Выберете время</label>
+                    <input type="range" min="1" max="<%= countNews%>" value="<%= countNews%>" id="dates-slider" >
+                </div>
+            </div>
+            <div class="filter container-time">
+                <div id="date-placeholder"><p><%= latestTime%></p></div>
+                <div class="loader-container">
+                    <div class="loader"></div>
+                </div>
 
-            <input type="text" name="keywords" id="keywords" placeholder="News keywords..."/>
-            <input type="submit" value="Найти">
-        </form>
+
+            </div>
+        </div>
+        <div class="search-container">
+            <form method="post" action="/search">
+                <label for="dates-slider">Поиск новостей</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for..." name="keywords" id="keywords"/>
+                    <span class="input-group-btn">
+                        <input class="btn btn-default" type="submit" value="Найти">
+                    </span>
+                </div>
+
+            </form>
+        </div>
     </div>
+
 
     <div class="container-news">
-
-        <div class="container-long-news shadow-wrap">
-                <div class="container-header">
-                    <h1>TOP NEWS</h1>
+        <% if(countLong !== 0) {%>
+            <div class="container-long-news shadow-wrap">
+            <div class="container-header">
+                <h1>TOP NEWS</h1>
+            </div>
+            <% longNews.map((item, i) => {%>
+            <div class="container-body">
+                <div class="item-media">
+                    <img src="<%= item._doc.imageSrc%>"  alt="<%= item._doc.title%>"/>
                 </div>
-                <% longNews.map((item, i) => {%>
-                    <div class="container-body">
-                    <div class="item-media">
-                        <img src="<%= item._doc.imageSrc%>"  alt="<%= item._doc.title%>"/>
+                <div class="item-info">
+                    <div class="item-title">
+                        <a href="<%= item._doc.link%>"><h2><%= item._doc.title%></h2></a>
                     </div>
-                    <div class="item-info">
-                        <div class="item-title">
-                            <a href="<%= item._doc.link%>"><h2><%= item._doc.title%></h2></a>
-                        </div>
-                        <div class="item-description">
-                            <p><%= item._doc.description%></p>
-                        </div>
+                    <div class="item-description">
+                        <p><%= item._doc.description%></p>
                     </div>
                 </div>
-                <%})%>
-
-
-
+            </div>
+            <%})%>
         </div>
+        <% }  %>
         <% if(shortNews.length !== 0) {%>
         <div class="container-short-news shadow-wrap">
             <h1>TOP HEADERS</h1>
@@ -69,12 +101,15 @@
 </div>
 
 <script>
+
     $( document ).ready(function(){
         let datesAndTimes = JSON.parse('<%- datesAndTimesNews%>');
         let date = '<%- latestDate %>';
         let time = '<%- latestTime%>';
         startRenderNews(date, time, datesAndTimes);
+
     });
 </script>
+
 </body>
 </html>

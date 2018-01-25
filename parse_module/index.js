@@ -117,24 +117,17 @@ function parseSBNation(URL, $) {
 
 function parseESPN(URL, $) {
     let news = [];
-    $(".contentCollection--hero .contentItem").each(function (item) {
+    $(".contentItem--hero").each(function (item) {
+        console.log("ok")
         let link, title, imageSrc, description;
-        if($(this).children("a").attr("href") !== undefined){
-            link = "http://www.espn.com" + $(this).children("a").attr("href");
-        }
-        else if($(this).find(".contentItem__contnent a").attr("href") !== undefined){
-            link = "http://www.espn.com" + $(this).find("section a").attr("href");
-        }
-        else if($(this).find("header a").attr("href") !== undefined){
-            link = "http://www.espn.com" + $(this).find("header a").attr("href");
-        }
-        else{
-            return;
-        }
-
+        link = "http://www.espn.com" + $(this).children("a").attr("href");
         title = $(this).find(".contentItem__title").text().trim();
         description = $(this).find(".contentItem__subhead").text().trim();
-        imageSrc = $(this).find(".media-wrapper").find("img").attr("data-default-src")
+        imageSrc = $(this).find(".media-wrapper").find("img").attr("data-default-src");
+        console.log(title);
+        console.log(description);
+        console.log(imageSrc);
+        console.log(link);
         news.push({title, description, imageSrc, link});
     });
     $(".headlineStack__listContainer .headlineStack__list li").each(function(item){

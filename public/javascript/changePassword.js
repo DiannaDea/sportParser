@@ -5,7 +5,9 @@ function checkConfirmPassword(newPassword, confirmPassword){
 function handlePasswordChangeEvents(adminName) {
     $("#btn-change-password").click(function () {
         if(!checkConfirmPassword($("#newPassword").val(), $("#confirmPassword").val())){
-            $("#res").html("<p>Пароли не совпадают</p>");
+            $("#res-danger").css("display", "block");
+            $("#res-success").css("display", "none");
+            $("#res-danger").text("Пароли не совпадают");
             return;
         }
         $.ajax({
@@ -18,13 +20,18 @@ function handlePasswordChangeEvents(adminName) {
             },
             statusCode: {
                 200: function (data) {
-                    $("#res").html("<p>Пароль успешно изменен</p>");
-                    setTimeout(() => {
+                    $("#res-success").css("display", "block");
+                    $("#res-danger").css("display", "none");
+                    $("#res-success").text("Пароль успешно изменен");
+                    setTimeout(function () {
                         window.location.replace(`/admin/${adminName}`);
-                    }, 1200);
+                    }, 1200)
+
                 },
                 401: function () {
-                    $("#res").html("<p>Old password isn't valid</p>");
+                    $("#res-danger").css("display", "block");
+                    $("#res-success").css("display", "none");
+                    $("#res-danger").text("Неправильный старый пароль");
                 }
             }
         })
