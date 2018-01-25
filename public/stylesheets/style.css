@@ -73,7 +73,9 @@ body {
 }
 
 #date-placeholder{
-    font-size: 23px;
+    margin: 2px;
+    font-size: 2em;
+
 }
 .container-time div{
     width: 40%;
@@ -104,8 +106,12 @@ body {
     height: 100%;
     background-color: white;
     padding: 10px 20px;
-}
 
+}
+.costyl{
+    flex-grow: 12;
+    text-align: center;
+ }
 .container-short-news h1 {
     color: sandybrown;
 }
@@ -206,7 +212,6 @@ body {
 
 .loader {
     display: none;
-
     border: 7px solid #f3f3f3;
     border-radius: 50%;
     border-top: 7px solid #3498db;

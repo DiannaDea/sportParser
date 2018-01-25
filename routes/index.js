@@ -92,12 +92,16 @@ function renderLatestNews(req, res) {
 
             let shortNews = getNewsByType(latestNews, true);
             let longNews = getNewsByType(latestNews, false);
+            let className = "container-short-news shadow-wrap";
+            if(longNews.length === 0) className += " costyl";
+            console.log(longNews.length, 17);
             res.render("newsPage", {
                 shortNews,
                 longNews,
                 countLong: longNews.length,
                 latestDate,
                 latestTime,
+                className,
                 countNews: timesOfLatestNews.length,
                 title: this.Model.modelName,
                 datesAndTimesNews: JSON.stringify(dateAndTimeNews)
@@ -116,7 +120,7 @@ function renderFilteredNews(req, res) {
             let shortNews = getNewsByType(selectedNews, true);
 
             let longNews = getNewsByType(selectedNews, false);
-            console.log(longNews.length);
+            console.log("Filtered: " + longNews.length);
             res.send({shortNews, longNews, countLong: longNews.length})
         })
         .catch(() => {

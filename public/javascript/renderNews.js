@@ -1,11 +1,19 @@
 function renderLongNews(news){
+    console.log(news.length,"here")
     let $container_long_news = $(".container-long-news");
+    if(news.length===0){
+        $container_long_news.empty();
+        $container_long_news.css("width", "0");
+        return ;
+    }
+
     $container_long_news.empty();
     $container_long_news.prepend(`
         <div class="container-header">
             <h1>TOP NEWS</h1>
         </div>
     `)
+    $container_long_news.css("width", "66%");
     news.map(item => {
         $container_long_news.append(`
             <div class="container-body">
@@ -25,8 +33,16 @@ function renderLongNews(news){
     })
 }
 
-function renderShortNews(news){
+function renderShortNews(news, longLen){
     let $container_short_news = $(".container-short-news");
+    if(longLen === 0){
+        $container_short_news.css("flex-grow", "12")
+        $container_short_news.css("text-align", "center");
+    }
+    else{
+        $container_short_news.css("flex-grow", "0");
+        $container_short_news.css("text-align", "start");
+    }
     $container_short_news.empty();
     $container_short_news.append("<h1>TOP HEADERS</h1>")
     news.map(item => {
@@ -47,7 +63,7 @@ function handleDateAndTimeChange(date, time){
             console.log(data);
             $(".loader").css("display", "none");
             renderLongNews(data.longNews);
-            renderShortNews(data.shortNews);
+            renderShortNews(data.shortNews, data.longNews.length);
         }
     })
 }

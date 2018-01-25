@@ -2,13 +2,14 @@
 <html>
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/stylesheets/slider.css">
     <link rel='stylesheet' href='/stylesheets/style.css' />
 
     <script src="/javascript/renderNews.js"></script>
@@ -41,7 +42,8 @@
                 </div>
             </div>
             <div class="filter container-time">
-                <div id="date-placeholder"><p><%= latestTime%></p></div>
+                <div id="date-placeholder">
+                    <%= latestTime%></div>
                 <div class="loader-container">
                     <div class="loader"></div>
                 </div>
@@ -68,7 +70,7 @@
         <% if(countLong !== 0) {%>
             <div class="container-long-news shadow-wrap">
             <div class="container-header">
-                <h1>TOP NEWS</h1>
+                <h1>TOP NEWS </h1>
             </div>
             <% longNews.map((item, i) => {%>
             <div class="container-body">
@@ -86,9 +88,12 @@
             </div>
             <%})%>
         </div>
-        <% }  %>
+        <% } else{ %>
+            <div  style="width:0" class="container-long-news shadow-wrap">
+            </div>
+        <% } %>
         <% if(shortNews.length !== 0) {%>
-        <div class="container-short-news shadow-wrap">
+        <div class="<%= className%>" >
             <h1>TOP HEADERS</h1>
             <% shortNews.map(item => {%>
             <a href="<%= item._doc.link %>"><p><%= item._doc.title%></p></a>

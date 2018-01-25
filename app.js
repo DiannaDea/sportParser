@@ -69,8 +69,9 @@ app.use(function (req, res, next) {
 });
 
 app.use(function (req, res, next) {
+    ////req.session.destroy();
     if(req.session.admin === undefined ){
-        if(req.url === "/admin" || req.url === "/admin/login"){
+        if( req.url.indexOf("admin") === -1 || req.url === "/admin" || req.url === "/admin/login"){
             next()
         }
         else{
