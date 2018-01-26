@@ -2,7 +2,7 @@
 <head>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel='stylesheet' href='/stylesheets/style.css' />
-
+    <script src="/javascript/goBack.js"></script>
 </head>
 <body>
 <% include navbar.ejs %>
@@ -10,6 +10,7 @@
     <div class="container-searched-news">
     <% if(Object.keys(resultNews).length === 0) { %>
         <h1>Найдено: 0 результатов.</h1>
+        <button class="btn btn-primary" onclick="goBack()">Назад</button>
     <%} else{%>
         <% for(let siteName in resultNews){ %>
     <div class="shadow-wrap container-search">
@@ -27,7 +28,6 @@
     </div>
     <%}%>
     <%} %>
-
 
     </div>
 </div>
