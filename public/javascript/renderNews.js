@@ -88,6 +88,8 @@ function startRenderNews(date, time, datesAndTimes){
         }
         else{
             $('#dates-slider').prop('max', selectedTimes.length);
+            $("#start-time").text(selectedTimes[0]);
+            $("#end-time").text(selectedTimes[selectedTimes.length - 1]);
             changeSliderVal(selectedTimes.length);
             changeTimeInPlaceholder(selectedTimes[selectedTimes.length-1]);
             //handleDateAndTimeChange(date, time);
@@ -105,11 +107,9 @@ function startRenderNews(date, time, datesAndTimes){
         let valSlider = +$(this).val();
         let wheelDelta = e.originalEvent.wheelDelta / 120 ;
         if(valSlider === 1 && wheelDelta === -1){
-            alert("Unable to get out of input range");
             return;
         }
         if(valSlider === selectedTimes.length && wheelDelta === 1){
-            alert("Unable to get out of input range");
             return;
         }
         wheelDelta > 0 ? valSlider++ : valSlider--;

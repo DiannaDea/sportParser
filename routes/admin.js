@@ -39,6 +39,11 @@ router.post("/login", function (req, res) {
     });
 });
 
+router.post("/logout", function (req, res) {
+    req.session.destroy();
+    res.status(200).send("Successfully logged out");
+})
+
 router.get("/:adminName/changePassword", function (req, res) {
     res.render("./admin/passwordChange", {adminName : req.params.adminName});
 });

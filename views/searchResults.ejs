@@ -8,21 +8,27 @@
 <% include navbar.ejs %>
 <div class="container">
     <div class="container-searched-news">
+    <% if(Object.keys(resultNews).length === 0) { %>
+        <h1>Найдено: 0 результатов.</h1>
+    <%} else{%>
         <% for(let siteName in resultNews){ %>
-            <div class="shadow-wrap container-search">
-                <div class="container-searched-header">
-                    <h3><%= siteName + " : найдено " + resultNews[siteName].length + " результата (ов)" %></h3>
-                </div>
-                <div class="container-searched-news-body">
-                    <% resultNews[siteName].map(item=>  {%>
-                    <div class="searched-item">
-                        <a href="<%= item.link%>"><p><%= item.title%></p></a>
-                    </div>
-
-                    <%}) %>
-                </div>
+    <div class="shadow-wrap container-search">
+        <div class="container-searched-header">
+            <h3><%= siteName + " : найдено " + resultNews[siteName].length + " результата (ов)" %></h3>
+        </div>
+        <div class="container-searched-news-body">
+            <% resultNews[siteName].map(item=>  {%>
+            <div class="searched-item">
+                <a href="<%= item.link%>"><p><%= item.title%></p></a>
             </div>
-        <%}%>
+
+            <%}) %>
+        </div>
+    </div>
+    <%}%>
+    <%} %>
+
+
     </div>
 </div>
 <script>

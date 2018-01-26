@@ -1,4 +1,40 @@
 function handleParseEvents(adminName) {
+    $("#param-parsing").focusout(function(){
+        let name = $(this).attr("name");
+        if(name === "time"){
+            if($(this).val() === "00:00"){
+                $("#res").css("display", "block");
+                $("#res").empty();
+                $("#res").text("Время парсинга не может быть нулевым");
+
+                $("#btn-set-parse").addClass("disabled");
+                setTimeout(() => {
+                    $("#res").css("display", "none");
+                }, 4000);
+
+            }
+            else{
+                $("#btn-set-parse").removeClass("disabled");
+            }
+        }
+        else {
+            if(+$(this).val() < 1 ){
+                $("#res").css("display", "block");
+                $("#res").empty();
+                $("#res").text("Дата парсинга не может быть отрицательной");
+
+                $("#btn-set-parse").addClass("disabled");
+                setTimeout(() => {
+                    $("#res").css("display", "none");
+                }, 4000);
+
+            }
+            else{
+                $("#btn-set-parse").removeClass("disabled");
+            }
+        }
+    });
+
     $("#parseBy").change(function () {
         if ($("#parseBy option:selected").val() === "time") {
             $("#param-parsing").attr("type", "time");
@@ -20,22 +56,30 @@ function handleParseEvents(adminName) {
         else {
             dataForServer.day = $("input[name=day]").val()
         }
-        $.ajax({
-            url: `/admin/setParse/${adminName}`,
-            type: "post",
-            dataType: "json",
-            data: dataForServer,
-            statusCode: {
-                200: function () {
-                    $("#res").css("display", "block");
-                    $("#res").text("Время парсинга успешно изменено");
-                    setTimeout(function () {
-                        $("#res").css("display", "none");
-                    }, 2000)
+        if($("#param-parsing").attr("name") === "time" && $("#param-parsing").val() === "00:00" ){
+            return;
+        }
+        else if($("#param-parsing").attr("name") === "day" && +$("#param-parsing").val() < 1 ){
+            return;
+        }
+        else{
+            $.ajax({
+                url: `/admin/setParse/${adminName}`,
+                type: "post",
+                dataType: "json",
+                data: dataForServer,
+                statusCode: {
+                    200: function () {
+                        $("#res").css("display", "block");
+                        $("#res").text("Время парсинга успешно изменено");
+                        setTimeout(function () {
+                            $("#res").css("display", "none");
+                        }, 2000)
 
-                },
-            }
-        })
+                    },
+                }
+            })
+        }
     })
 
     $("#btn-start-parse").click(function () {
@@ -66,6 +110,23 @@ function handleParseEvents(adminName) {
                     $("#res").text("Парсинг остановлен");
                     setTimeout(function () {
                         $("#res").css("display", "none");
+                    }, 2000)
+                },
+            }
+        })
+    })
+
+    $("#btn-logout").click(function () {
+        $.ajax({
+            url: `/admin/logout`,
+            type: "post",
+            statusCode: {
+                200: function () {
+                    $("#res").css("display", "block");
+                    $("#res").empty();
+                    $("#res").text("Вы вышли из аккаунта");
+                    setTimeout(function () {
+                        window.location.replace(`/admin`);
                     }, 2000)
                 },
             }

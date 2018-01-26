@@ -86,16 +86,17 @@ function renderLatestNews(req, res) {
             let latestTime = timesOfLatestNews[timesOfLatestNews.length - 1];
 
             let latestNews = news[latestDate][latestTime];
-
             let shortNews = getNewsByType(latestNews, true);
             let longNews = getNewsByType(latestNews, false);
             let className = "container-short-news shadow-wrap";
-            if(longNews.length === 0) className += " costyl";
+            if(longNews.length === 0) className += " short-news-grow";
             res.render("newsPage", {
                 shortNews,
                 longNews,
                 countLong: longNews.length,
                 latestDate,
+                firstTime : dateAndTimeNews[latestDate][0],
+                lastTime : dateAndTimeNews[latestDate][dateAndTimeNews[latestDate].length-1],
                 latestTime,
                 className,
                 countNews: timesOfLatestNews.length,
