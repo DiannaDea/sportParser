@@ -1,12 +1,133 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title %></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <style>
+      .h-100{
+        height: 400px;
+      }
+      .news-top-left{
+        position: relative;
+      }
+      .news-top-left .top-title{
+        position: absolute;
+
+        color: white;
+        font-weight: bold;
+        font-size: 50px;
+        z-index: 2000;
+        padding: 15px;
+      }
+      .top-title{
+        background-color:#999999a3;
+        bottom: 0;
+      }
+      .top-title-site {
+        color: red;
+      }
+      .news-top-left .top-title a, .news-top-left .top-title a:hover{
+        color: white;
+        text-decoration: none;
+      }
+
+      .top-news-little{
+        position: relative;
+      }
+      .top-title-little{
+        position: absolute;
+        bottom: 0;
+        font-size: 20px;
+        font-weight: bold;
+        padding: 7px;
+        background-color:#999999a3;
+      }
+      .top-title-little a,  .top-title-little a:hover{
+        color: white;
+        text-decoration: none;
+      }
+    </style>
   </head>
   <body>
   <% include navbar.ejs %>
-    <h2>Choose site you want to get news</h2>
+
+    <div class="container-main">
+      <div class="site-title">
+        <h1>🔥 HOT NEWS 🔥</h1>
+      </div>
+      <div class="row">
+        <div class=" h-100  col-sm-6">
+          <div class="news-top-left " >
+            <div class="top-title">
+              <p class="top-title-site"><%= Object.keys(topNews)[1] %></p>
+                <a href="<%= topNews[Object.keys(topNews)[1]].link %>">
+
+                  <p class="top-title-news-title"><%= topNews[Object.keys(topNews)[1]].title %></p>
+
+                </a>
+            </div>
+            <div class="top-image">
+              <img src="<%= topNews[Object.keys(topNews)[1]].imageSrc %>" width="100%" height="410px"/>
+            </div>
+          </div>
+        </div>
+        <div class="h-100  col-sm-6">
+          <div style="margin-bottom: 10px" class="row ">
+
+            <div class="col-sm-6">
+              <div class="top-news-little">
+                <div class="top-title-little">
+                  <p class="top-title-site"><%= Object.keys(topNews)[2] %></p>
+                  <a href="<%= topNews[Object.keys(topNews)[2]].link %>">
+                    <p class="top-title-news-title"><%= topNews[Object.keys(topNews)[2]].title %></p>
+                  </a>
+                </div>
+
+                <img src="<%= topNews[Object.keys(topNews)[2]].imageSrc %>" width="100%" height="200px"/></div>
+            </div>
+
+            <div class="col-sm-6">
+              <div class="top-news-little">
+                <div class="top-title-little">
+                  <p class="top-title-site"><%= Object.keys(topNews)[3] %></p>
+                  <a href="<%= topNews[Object.keys(topNews)[3]].link %>">
+                    <p class="top-title-news-title"><%= topNews[Object.keys(topNews)[3]].title %></p>
+                  </a>
+                </div>
+
+                <img src="<%= topNews[Object.keys(topNews)[3]].imageSrc %>" width="100%" height="200px"/></div>
+            </div>
+          </div>
+          <div class="row ">
+
+            <div class="col-sm-6">
+              <div class="top-news-little">
+                <div class="top-title-little">
+                  <p class="top-title-site"><%= Object.keys(topNews)[4] %></p>
+                  <a href="<%= topNews[Object.keys(topNews)[4]].link %>">
+                    <p class="top-title-news-title"><%= topNews[Object.keys(topNews)[4]].title %></p>
+                  </a>
+                </div>
+
+                <img src="<%= topNews[Object.keys(topNews)[4]].imageSrc %>" width="100%" height="200px"/></div>
+              </div>
+
+            <div class="col-sm-6">
+              <div class="top-news-little">
+                <div class="top-title-little">
+                  <p class="top-title-site"><%= Object.keys(topNews)[1] %></p>
+                  <a href="<%= topNews[Object.keys(topNews)[1]].link %>">
+                    <p class="top-title-news-title"><%= topNews[Object.keys(topNews)[1]].title %></p>
+                  </a>
+                </div>
+
+                <img src="<%= topNews[Object.keys(topNews)[1]].imageSrc %>" width="100%" height="200px"/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
 
   </body>
 </html>

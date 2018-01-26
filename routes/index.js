@@ -7,9 +7,7 @@ const _ = require('lodash');
 const models = require("../models");
 
 
-router.get('/', function (req, res) {
-    res.render('index', {title: 'Express'});
-});
+router.get('/', renderTopNews);
 
 function getAllNewsGroupedByDates(Model) {
     return Model.findAndFilter()
@@ -76,7 +74,6 @@ function getDateAndTimeRanges(news) {
 }
 
 function renderLatestNews(req, res) {
-
     getAllNewsGroupedByDates(this.Model)
         .then(news => {
             let dateAndTimeNews = getDateAndTimeRanges(news);
@@ -94,7 +91,6 @@ function renderLatestNews(req, res) {
             let longNews = getNewsByType(latestNews, false);
             let className = "container-short-news shadow-wrap";
             if(longNews.length === 0) className += " costyl";
-            console.log(longNews.length, 17);
             res.render("newsPage", {
                 shortNews,
                 longNews,
@@ -128,6 +124,35 @@ function renderFilteredNews(req, res) {
         });
 }
 
+function getOneTopNew(Model){
+    return getAllNewsGroupedByDates(Model)
+        .then(news => {
+            let dates = getDateAndTimeRanges(news);
+            let maxDate = Object.keys(dates)[Object.keys(dates).length-1];
+            let maxTime = Object.keys(news[maxDate])[Object.keys(news[maxDate]).length - 1];
+            let newsDateTime = news[maxDate][maxTime];
+            let longNews = newsDateTime.filter(item => {
+                return item.shortNew === false;
+            });
+            return new Promise(function (resolve, reject) {
+                if(longNews.length !== 0){
+                    resolve({[Model.modelName] : longNews[0]})
+                }
+               else{
+                    resolve({[Model.modelName] : []})
+                }
+            })
+        })
+}
+
+function renderTopNews(req, res) {
+    Promise.all(Object.keys(models).map(modelName => {
+        return getOneTopNew(models[modelName])
+    })).then(news => {
+        let topNews = convertArrNewsToObj(news);
+        res.render('index', {topNews});
+    });
+}
 
 function searchModelNews(Model, param) {
     return Model.find({title: {$regex: '.*' + param + '.*', $options: 'i'}})
